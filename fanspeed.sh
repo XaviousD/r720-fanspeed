@@ -1,16 +1,25 @@
-#!/bin/bash
 # Adapted from https://github.com/That-Guy-Jack/HP-ILO-Fan-Control/
-# for Dell IPMI systems
-# by https://jcx.life
+# for Dell IPMI systems by https://jcx.life
+#
 # these original instructions might not be valid for installing it on your system.
-
-# crontab -l > mycron
-# echo "#" >> mycron
-# echo "# At every 2nd minute" >> mycron
-# echo "*/1 * * * * /bin/bash /fanspeed.sh >> /tmp/cron.log" >> mycron
-# crontab mycron
+#
+# Contributers via Discord
+# ------------------------
+# Cichy / Blade
+# 
+#
+# FOR LATER USE/TWEEKING 
+#
+# !/bin/bash
+# crontab -l > mycron THIS ONE LIST ALL CRONS AND SAVES IT TO FILE
+# echo "#" >> mycron THIS ADDS COMMENT START TO SAVED CRONS 
+# echo "# At every 2nd minute" >> mycron THIS IS COMMENT SO OTHER KNOW HOW OFTEN IT WILL RUN
+# echo "*/1 * * * * /bin/bash /fanspeed.sh >> /tmp/cron.log" >> mycron THIS LINE ADD CRON JOB, RUNNING FANSPEED.SH EVERY X MINUTES AND REDIRECT OUTPUT TO LOG IN TMP
+# crontab mycron THIS ONE TO LOAD CRONS FRON FILE
 # rm mycron
-# chmod +x /fanspeed.sh
+# chmod +x /fanspeed.sh THIS ONE MAKES SCRIPT ECECUTABLE
+#
+# ty Cichy from TechnoTim's discord for helping me understand crontab formatting
 #
 ## Notes from Xavious
 # THIS IS VERY EARLY WORK
