@@ -16,7 +16,7 @@ Do-To List:
 * 
 
 Credits:
-Adapted from https://github.com/That-Guy-Jack/HP-ILO-Fan-Control/
-by jcx (https://jcx.life)
-Initial Dell iDRAC modification
-by jcx (https://jcx.life)
+Adapted from https://github.com/That-Guy-Jack/HP-ILO-Fan-Control/<br>
+by jcx (https://jcx.life)<br>
+Initial Dell iDRAC modification<br>
+by jcx (https://jcx.life)<br>
