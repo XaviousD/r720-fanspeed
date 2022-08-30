@@ -20,17 +20,18 @@ Do-To List:
 * Switch from a CRON Task to a System Service)
 
 Credits:<br>
+<br>
 Adapted from https://github.com/That-Guy-Jack/HP-ILO-Fan-Control/<br>
 by jcx (https://jcx.life)<br>
 Initial Dell iDRAC modification<br>
 by jcx (https://jcx.life)<br>
-
+<br>
 Contributors:<br>
 <br>
-TechnoTim's Discord<br>
+TechnoTim's Discord (http://www.twitch.tv/TechnoTime) (https://www.youtube.com/c/TechnoTimLive) (https://discord.gg/technotim)<br>
 -------------------<br>
 jcx / Cichy / Blade<br>
 <br>
-Other
+Other<br>
 -------------------<br>
 <br>
