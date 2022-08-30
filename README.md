@@ -3,7 +3,7 @@ Dell PowerEdge r720 FanSpeed Controls via IPMI
 
 Description:
 ------------
-A CRON Task script to monitor CPU Temp's on the r720 and utilize the IPMI feature of Dell's iDRAC to adjust fan speeds based on preferred fan curves.  3 fan curves to start, Low/Normal/Hot are used based on the ambient temp at the inlet.  System uses 3 hysteresis values (1) for each curve to determine the degree of change in CPU Temp's before adjusting fan speeds.  Low curve uses a large degree of change, Normal uses a more nominal value and the Hot Fan Curve uses a more aggressive value.
+A CRON Task script to monitor CPU Temp's on the r720 and utilize the IPMI feature of Dell's iDRAC to adjust fan speeds based on preferred fan curves.  3 fan curves to start, Low/Normal/Hot are used based on the ambient temp at the inlet.  Low curve uses a large degree of change, Normal uses a more nominal value and the Hot Fan Curve uses a more aggressive value.
 
 History:
 --------
@@ -11,7 +11,6 @@ I started out searching the interwebs for a method of controlling my r720's fan 
 
 Features:
 * Multiple Fan Curves (Low/Normal/Hot)
-* Built in hysteresis
 * Runs as a CRON task
 * Soon(tm)
 
@@ -25,3 +24,13 @@ Adapted from https://github.com/That-Guy-Jack/HP-ILO-Fan-Control/<br>
 by jcx (https://jcx.life)<br>
 Initial Dell iDRAC modification<br>
 by jcx (https://jcx.life)<br>
+
+Contributors:<br>
+<br>
+TechnoTim's Discord<br>
+-------------------<br>
+jcx / Cichy / Blade<br>
+<br>
+Other
+-------------------<br>
+<br>

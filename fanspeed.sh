@@ -38,6 +38,7 @@
 ##################################
 #
 # Fan Speed Hex Codes
+# AVG RPM Obtained by setting fan % and taking an average of the RPM on the 7 fans in r720's
 #
 FS10="0x0a"         # Hex Code for 10% RPM or AVG 2360 RPM      
 FS20="0x14"         # Hex Code for 20% RPM or AVG 3340 RPM
@@ -66,21 +67,21 @@ USERNAME=root           # Login for iDRAC  - I suggest creating a specific accou
 PASSWORD=calvin         # Password for above login
 HOSTIP="192.168.0.26"   # IP Address for the iDRAC interface on the system,
 LAMBIENT="20"           # Ambient Inlet Air Temp for Silent Running Fan Curve [Less then or Equal to?]
-LHYST="6"               # Degree of Deviation before Fan Speed is modified in the Silent Running Can Curve
 NAMBIENT="20"           # Ambient Inlet Air Temp for Normal Running Fan Curve [Equal to or Greater then?]
-NHYST="3"               # Degree of Deviation before Fan Speed is modified in the Normal Running Can Curve
 HAMBIENT="24"           # Ambient Inlet Air Temp for Hot Running Fan Curve [Equal to or Greater then?]
-HHYST="2"               # Degree of Deviation before Fan Speed is modified in the Hot Running Can Curve
-MINTEMP="50"            # Temp that determines if system is idle and sets fan speeds to 10%
-MAXTEMP="67"            # Temp that determines if system is overheating and max fanspeeds are used.   
+LMINTEMP="??"            # Temp that determines if system is idle and sets fan speeds to 10%
+LMAXTEMP="??"            # Temp that determines if system is overheating and max fanspeeds are used.   
+LMINTEMP="??"            # Temp that determines if system is idle and sets fan speeds to 10%
+LMAXTEMP="??"            # Temp that determines if system is overheating and max fanspeeds are used.   
+LMINTEMP="??"            # Temp that determines if system is idle and sets fan speeds to 10%
+LMAXTEMP="??"            # Temp that determines if system is overheating and max fanspeeds are used.   
 #
 # Silent Running Fan Curve Temps
 # These have a great Gap between the curves, fewer steps, and high degree of change before next step is set
 #
-LFC01="??"               #
-LFC02="??"               #
-LFC03="??"               #
-LFC04="??"               #
+LFC01="??"               # 30% RPM
+LFC02="??"               # 50% RPM
+LFC03="??"               # 70% ROM
 #
 # Normal Running Fan Curve Temps
 # These have a great Gap between the curves, fewer steps, and high degree of change before next step is set
@@ -137,14 +138,14 @@ echo "==============="
 if [[ $AVGTEMP > $MAXTEMP ]]
    then
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FSMAX
-elif [[ $AVGTEMP > $TEMP3 ]]
+elif [[ $AVGTEMP > $LFC03 ]]
     then
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED80
 
-elif [[ $AVGTEMP > $TEMP2 ]]
+elif [[ $AVGTEMP > $LFC02 ]]
     then
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED60
-elif [[ $AVGTEMP > $TEMP1 ]]
+elif [[ $AVGTEMP > $LFC01 ]]
     then
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED40
 elif [[ $AVGTEMP > $MINTEMP ]]
