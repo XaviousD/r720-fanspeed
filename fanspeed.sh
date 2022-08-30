@@ -17,7 +17,12 @@
 # This is not ready for production. Download/hackup as your own risk.
 # This above lines will be removed when the code is actually usable.
 #
-#
+##################################
+# PreReq's that need to be installed
+##################################
+#  
+# ipmitool
+# lm-sensors
 #
 ##################################
 # Hard Variables - Do not Change #
