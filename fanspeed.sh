@@ -7,10 +7,10 @@
 # crontab -l > mycron
 # echo "#" >> mycron
 # echo "# At every 2nd minute" >> mycron
-# echo "*/1 * * * * /bin/bash /autofan.sh >> /tmp/cron.log" >> mycron
+# echo "*/1 * * * * /bin/bash /fanspeed.sh >> /tmp/cron.log" >> mycron
 # crontab mycron
 # rm mycron
-# chmod +x /autofan.sh
+# chmod +x /fanspeed.sh
 #
 ## Notes from Xavious
 # THIS IS VERY EARLY WORK
@@ -22,6 +22,7 @@
 ##################################
 # Hard Variables - Do not Change #
 ##################################
+#
 # Fan Speed Hex Codes
 #
 FS10="0x0a"         # Hex Code for 10% RPM or AVG 2360 RPM      
@@ -41,14 +42,21 @@ ENABLE="raw 0x30 0x30 0x01 0x00"    # Hex Code for Enabling IPMI to control Fan 
 DISABLE="raw 0x30 0x30 0x01 0x01"   # Hex Code for giving control back to iDRAC
 FAN="raw 0x30 0x30 0x02 0xff"       # Hex Code for adjusting fan speed last entry is fanspeed from above
 #
-# Variables That Can Be Changed
+##################################
+# Soft Variables - Modify to User Preferences
+###################################
+#
+# User/Password/Ip/Base Temps Etc
 #
 USERNAME=root           # Login for iDRAC  - I suggest creating a specific account that only has access to fan control such as fanspeed
 PASSWORD=calvin         # Password for above login
 HOSTIP="192.168.0.26"   # IP Address for the iDRAC interface on the system,
-LAMBIENT="19"           # Ambient Inlet Air Temp for Silent Running Fan Curve [Less then or Equal to?]
+LAMBIENT="20"           # Ambient Inlet Air Temp for Silent Running Fan Curve [Less then or Equal to?]
+LHYST="6"               # Degree of Deviation before Fan Speed is modified in the Silent Running Can Curve
 NAMBIENT="20"           # Ambient Inlet Air Temp for Normal Running Fan Curve [Equal to or Greater then?]
-HAMBIENT="23"           # Ambient Inlet Air Temp for Hot Running Fan Curve [Equal to or Greater then?]
+NHYST="3"               # Degree of Deviation before Fan Speed is modified in the Normal Running Can Curve
+HAMBIENT="24"           # Ambient Inlet Air Temp for Hot Running Fan Curve [Equal to or Greater then?]
+HHYST="2"               # Degree of Deviation before Fan Speed is modified in the Hot Running Can Curve
 MINTEMP="50"            # Temp that determines if system is idle and sets fan speeds to 10%
 MAXTEMP="67"            # Temp that determines if system is overheating and max fanspeeds are used.   
 #
