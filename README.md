@@ -28,7 +28,8 @@ by jcx (https://jcx.life)<br>
 <br>
 Contributors:<br>
 <br>
-TechnoTim's Discord (http://www.twitch.tv/TechnoTime) (https://www.youtube.com/c/TechnoTimLive) (https://discord.gg/technotim)<br>
+TechnoTim's Discord<br>
+(http://www.twitch.tv/TechnoTime) (https://www.youtube.com/c/TechnoTimLive) (https://discord.gg/technotim)<br>
 -------------------<br>
 jcx / Cichy / Blade<br>
 <br>
