@@ -32,8 +32,8 @@ T1_command="$(sensors -Aj coretemp-isa-0000 | -jq '.[][] | to_entries[] | select
 T2_command="$(sensors -Aj coretemp-isa-0001 | -jq '.[][] | to_entries[] | select(.key | endswith(\"input\")) | .value' | sort -rn | head -n1)"
 
 #run subprocess commands to get temps
-temperature_1 = subprocess.check_output(T1_command, shell=True)
-temperature_2 = subprocess.check_output(T2_command, shell=True)
+temperature_1 = subprocess.check_output(T1_command, shell=True).decode('utf-8')
+temperature_2 = subprocess.check_output(T2_command, shell=True).decode('utf-8')
 
 logging.info("CPU1 Temp: " + temperature_1)
 logging.info("CPU2 Temp: " + temperature_2)
@@ -42,7 +42,7 @@ logging.info("Average Temp: " + str(average_temp))
 
 #command to get ambient temp
 AMBIENT_command=f"ipmitool -I lanplus -H {HOSTIP} -U {USERNAME} -P {PASSWORD} sdr type temperature | grep -i inlet | grep -Po '\d{2,3} degrees C' | grep -Po '\d{2,3}')"
-ambient_temp = subprocess.check_output(AMBIENT_command, shell=True)
+ambient_temp = subprocess.check_output(AMBIENT_command, shell=True).decode('utf-8')
 logging.info("Ambient Temp: " + ambient_temp)
 
 SETFANSPEED_command= f"ipmitool -I lanplus -H {HOSTIP} -U {USERNAME} -P {PASSWORD} {FAN} "
