@@ -44,8 +44,8 @@ if __name__ == "__main__":
 
 
     #Let's assme for now the logic to get CPU temps is valid
-    T1_command="$(sensors -Aj coretemp-isa-0000 | jq '.[][] | to_entries[] | select(.key | endswith(\"input\")) | .value' | sort -rn | head -n1)"
-    T2_command="$(sensors -Aj coretemp-isa-0001 | jq '.[][] | to_entries[] | select(.key | endswith(\"input\")) | .value' | sort -rn | head -n1)"
+    T1_command="sensors -Aj coretemp-isa-0000 | jq '.[][] | to_entries[] | select(.key | endswith(\"input\")) | .value' | sort -rn | head -n1"
+    T2_command="sensors -Aj coretemp-isa-0001 | jq '.[][] | to_entries[] | select(.key | endswith(\"input\")) | .value' | sort -rn | head -n1"
 
     #run subprocess commands to get temps
     temperature_1 = subprocess.check_output(T1_command, shell=True).decode('utf-8')
