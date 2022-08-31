@@ -40,7 +40,8 @@
 #
 # Default Ambient Temp, start at 0, script gets current ambient temp for curve checks
 #
-AMBIENT="0"
+AMBIENT="0"     # Base Ambient just for listing the variable in the script so i know its in use.
+C_FS="Unknown"  # Script sets this for information purposes later.
 #
 # Fan Speed Hex Codes
 # AVG RPM Obtained by setting fan % and taking an average of the RPM on the 7 fans in r720's
