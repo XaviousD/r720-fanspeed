@@ -3,8 +3,8 @@
 # Get the CPU Core temps for both CPU's, Average the temps for each CPU then Average those to get a system CPU temp to use for
 # in fav curves
 #
-T1="$(sensors -Aj coretemp-isa-0000 | -jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
-T2="$(sensors -Aj coretemp-isa-0001 | -jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
+T1="$(sensors -Aj coretemp-isa-0000 | jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
+T2="$(sensors -Aj coretemp-isa-0001 | jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
 TOTALTEMP=$(($T1+$T2))
 AVGTEMP=$(($TOTALTEMP/2))
 #
