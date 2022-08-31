@@ -1,0 +1,4 @@
+#
+# Query iDRAC for current Fan Speeds in RPM
+#
+ipmitool sdr type Fan | grep -vi redundancy

@@ -12,12 +12,16 @@ I started out searching the interwebs for a method of controlling my r720's fan 
 Features:
 * Multiple Fan Curves (Low/Normal/Hot)
 * Runs as a CRON task
+* Commincates directly with iDRAC, no need for user/pass/ip input
 * Soon(tm)
 
 Do-To List:
 * Soon(tm)
 * Build in some type of logging, not sure how has this could potentially take up alot of space depending how ofter it runs.
 * Switch from a CRON Task to a System Service)
+
+Misc:
+* Tools directory has a few scripts for testing if anyone wishes to use them.  They are simply bits and pieces of the script i've cut out to test and make sure things are working correctly
 
 Credits:<br>
 <br>
