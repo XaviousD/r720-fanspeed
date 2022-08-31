@@ -34,5 +34,5 @@ TechnoTim's Discord<br>
 jcx / Cichy / Blade<br>
 <br>
 Other<br>
--------------------<br>
+sharptooth (http://www.twitch.tv/sharptooth) - Healthcheck ideas to make sure cron job is working so system doesnt explode.<br>
 <br>
