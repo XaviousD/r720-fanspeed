@@ -32,10 +32,15 @@
 #  
 # ipmitool
 # lm-sensors
+# jq
 #
 ##################################
 # Hard Variables - Do not Change #
 ##################################
+#
+# Default Ambient Temp, start at 0, script gets current ambient temp for curve checks
+#
+AMBIENT="0"
 #
 # Fan Speed Hex Codes
 # AVG RPM Obtained by setting fan % and taking an average of the RPM on the 7 fans in r720's
@@ -67,8 +72,9 @@ USERNAME=root           # Login for iDRAC  - I suggest creating a specific accou
 PASSWORD=calvin         # Password for above login
 HOSTIP="192.168.0.26"   # IP Address for the iDRAC interface on the system,
 LAMBIENT="20"           # Ambient Inlet Air Temp for Silent Running Fan Curve [Less then or Equal to?]
-NAMBIENT="20"           # Ambient Inlet Air Temp for Normal Running Fan Curve [Equal to or Greater then?]
+NAMBIENT="21"           # Ambient Inlet Air Temp for Normal Running Fan Curve [Equal to or Greater then?]
 HAMBIENT="24"           # Ambient Inlet Air Temp for Hot Running Fan Curve [Equal to or Greater then?]
+
 LMINTEMP="??"            # Temp that determines if system is idle and sets fan speeds to 10%
 LMAXTEMP="??"            # Temp that determines if system is overheating and max fanspeeds are used.   
 LMINTEMP="??"            # Temp that determines if system is idle and sets fan speeds to 10%
@@ -93,9 +99,6 @@ NFC04="??"               #
 NFC05="??"               #
 NFC06="??"               #
 NFC07="??"               #
-NFC08="??"               #
-NFC09="??"               #
-NFC10="??"               #
 #
 # Hot Running Fan Curve Temps
 # These have a great Gap between the curves, fewer steps, and high degree of change before next step is set
@@ -113,26 +116,73 @@ HFC05="??"               #
 ## Setup Ambient temp variables.  Have system check the ambient temp value and adjust fan curve accordingly.
 ## Example = If ambient is < LAMBIENT then fan curve speeds and reduced by 10% each step.
 #
-#           With a Normal Ambient operation speeds may be 10% 20% 30% 40% 50% 60% 70% 80% 90% MAX in the curve
-#
 #           In Low Ambient operations speeds would be 10% 30% 50% 70% MAX
 #
-#           In a High Ambient operations would use same curve as Normal but with
+#           With a Normal Ambient operation speeds may be 10% 20% 30% 40% 50% 60% 70% 80% 90% MAX in the curve
+#
+#           In a High Ambient operations would use same curve points as Low but closer fan curve
 #           a faster change with fewer degrees of change allowed between speed changes
 #
 #
 
-T1="$(sensors -Aj coretemp-isa-0000 | jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
-T2="$(sensors -Aj coretemp-isa-0001 | jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
+#
+# Get the CPU Core temps for both CPU's, Average the temps for each CPU then Average those to get a system CPU temp to use for
+# in fav curves
+#
+T1="$(sensors -Aj coretemp-isa-0000 | -jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
+T2="$(sensors -Aj coretemp-isa-0001 | -jq '.[][] | to_entries[] | select(.key | endswith("input")) | .value' | sort -rn | head -n1)"
 TOTALTEMP=$(($T1+$T2))
 AVGTEMP=$(($TOTALTEMP/2))
+#
+# Get Current Ambient temp to determine which fan curve to use
+#
+AMBIENT=$(ipmitool -I lanplus -H 192.168.0.26 -U root -P calvin sdr type temperature | grep -i inlet | grep -Po '\d{2,3} degrees C' | grep -Po '\d{2,3}')
+#
+# Print Current Temps
+#
+echo "==============="
+echo "CPU 1: $T1 - CPU 2: $T2 - Average: $AVGTEMP - Ambient: $AMBIENT"
+echo "==============="
 
-echo "==============="
-echo "CPU 1: $T1 - CPU 2: $T2 - Average: $AVGTEMP"
-echo "==============="
+if [[ $AMBIENT > $HAMBIENT ]]
+   then
+        #The curves for High Ambient Curve
+elif [[ $AMBIENT > $NAMBIENT ]]
+    then
+        #The curves for Normal Ambient Curve
+elif [[ $AMBIENT < $LOWAMBIENT ]]
+    then
+        if [[ $AVGTEMP > $LMAXTEMP ]]
+           then
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FSMAX
+        elif [[ $AVGTEMP > $LFC03 ]]
+            then
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS70
+        elif [[ $AVGTEMP > $LFC02 ]]
+            then
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS50
+        elif [[ $AVGTEMP > $LFC01 ]]
+            then
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS30
+        elif [[ $AVGTEMP > $MINTEMP ]]
+            then
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS20
+        else
+                ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS10
+        fi
+fi
 
 #
 # Silent Running Fan Curve
+#
+#           In Low Ambient operations speeds would be 10% 30% 50% 70% MAX
+# Silent Running Fan Curve Temps
+# These have a great Gap between the curves, fewer steps, and high degree of change before next step is set
+#
+LFC01="??"               # 30% RPM
+LFC02="??"               # 50% RPM
+LFC03="??"               # 70% ROM
+#
 #
 
 if [[ $AVGTEMP > $MAXTEMP ]]
@@ -140,19 +190,18 @@ if [[ $AVGTEMP > $MAXTEMP ]]
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FSMAX
 elif [[ $AVGTEMP > $LFC03 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED80
-
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS70
 elif [[ $AVGTEMP > $LFC02 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED60
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS50
 elif [[ $AVGTEMP > $LFC01 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED40
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS30
 elif [[ $AVGTEMP > $MINTEMP ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED30
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS20
 else
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED20
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS10
 fi
 
 #
@@ -162,21 +211,32 @@ fi
 if [[ $AVGTEMP > $MAXTEMP ]]
    then
         ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FSMAX
-elif [[ $AVGTEMP > $TEMP3 ]]
+elif [[ $AVGTEMP > $NFC07 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED80
-
-elif [[ $AVGTEMP > $TEMP2 ]]
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS90
+elif [[ $AVGTEMP > $NFC06 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED60
-elif [[ $AVGTEMP > $TEMP1 ]]
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS80
+elif [[ $AVGTEMP > $NFC05 ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED40
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS70
+elif [[ $AVGTEMP > $NFC04 ]]
+    then
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS60
+elif [[ $AVGTEMP > $NFC03 ]]
+    then
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS50
+elif [[ $AVGTEMP > $NFC02 ]]
+    then
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS40
+elif [[ $AVGTEMP > $NFC01 ]]
+    then
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS30
 elif [[ $AVGTEMP > $MINTEMP ]]
     then
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED30
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS20
 else
-        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FANSPEED20
+        ipmitool -I lanplus -H $HOSTIP -U $USERNAME -P $PASSWORD $FAN $FS10
 fi
 
 #
