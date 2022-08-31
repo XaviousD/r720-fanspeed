@@ -57,7 +57,7 @@ if __name__ == "__main__":
     logging.info("Average Temp: " + str(average_temp))
 
     #command to get ambient temp
-    AMBIENT_command=f"ipmitool -I lanplus -H {HOSTIP} -U {USERNAME} -P {PASSWORD} sdr type temperature | grep -i inlet | grep -Po '\d{2,3} degrees C' | grep -Po '\d{2,3}')"
+    AMBIENT_command=f"ipmitool -I lanplus -H 192.168.0.26 -U root -P calvin sdr type temperature | grep -i inlet | grep -Po '\d{2,3} degrees C' | grep -Po '\d{2,3}'"
     ambient_temp = subprocess.check_output(AMBIENT_command, shell=True).decode('utf-8')
     logging.info("Ambient Temp: " + ambient_temp)
 
